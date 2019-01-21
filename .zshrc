@@ -70,7 +70,7 @@ setopt no_beep
 setopt no_flow_control
 
 #C-dでzshを終了させない
-setopt ignore_eof
+# setopt ignore_eof
 
 #'#'以降をコメントとする
 setopt interactive_comments
@@ -109,19 +109,31 @@ bindkey ';5D' backward-word
 #エイリアス設定
 alias la='ls -a'
 alias ll='ls -l'
+alias l='ls'
+alias pip-upgrade="pip freeze --local | grep -v '^\-e' | cut -d = -f 1 | xargs pip install -U pip"
 
 alias mkdir='mkdir -p'
+
+function mkdircd(){ mkdir -p $@ && cd $_ }
+
+function mvcd(){ mv $@ && cd $_ }
+
+function iphone(){ sudo idevicepair pair }
 
 #sudoの後にコマンドのエイリアス展開を有効にする
 alias sudo='sudo '
 
 alias ...='cd ../..'
 alias ....='cd ../../..'
+alias .....='cd ../../../..'
 
+# alias apt=apt-fast
+alias update='apt update && apt upgrade'
 #グローバルエイリアス
 alias -g L='| less'
 alias -g G='| grep'
 alias -g M='| more'
+alias -g S='| sort'
 
 #Cで標準出力をクリップボードにコピーする
 if which pbcopy>/dev/null 2>&1 ; then
@@ -142,7 +154,7 @@ alias -s py=ipython
 function runcy()
 {
     run_name=${1:2:r}
-    cython $1 --embed
+    cython ${1:2} --embed
     gcc -O2 $run_name.c -o $run_name $(python-config --cflags --ldflags) && shift && ./$run_name $@
     rm $run_name.c
 }
@@ -155,64 +167,132 @@ alias -s sh=bash
 alias -s html=firefox
 
 # lua
-alias lua='lua5.3'
+alias -s lua=luajit
+
 #写真を見る
-alias -s {png, jpg, bmp, PNG, JPG, BMP}=eog
+alias -s {png,jpg,bmp,PNG,JPG,BMP}=eog
+
+#pdf
+alias -s pdf=evince
+
+#blender
+alias -s blend=blender
+
+#gimp
+alias -s xcf=gimp
 
 #圧縮ファイルを展開
 function extract()
 {
     case $1 in
-        *.tar.gz|*.tgz  ) tar xzvf $1;;
-        *.tar.xz        ) tar Jxvf $1;;
-        *.zip           ) unzip $1;;
-        *.lzh           ) lha e $1;;
-        *.tar.bz2|*.tbz ) tar xjvf $1;;
-        *.tar.Z         ) tar zxvf $1;;
-        *.gz            ) gzip -d $1;;
-        *.bz2           ) bzip -d $1;;
-        *.Z             ) uncompress $1;;
-        *.tar           ) tar xvf $1;;
-        *.arj           ) unarj $1;;
+        *.tar.gz|*.tgz) tar xzvf ${1:2};;
+        *.tar.xz) tar Jxvf ${1:2};;
+        *.zip) unzip ${1:2};;
+        *.lzh) lha e ${1:2};;
+        *.tar.bz2|*.tbz) tar xjvf ${1:2};;
+        *.tar.Z) tar zxvf ${1:2};;
+        *.gz) gzip -d ${1:2};;
+        *.bz2) bzip -d ${1:2};;
+        *.Z) uncompress ${1:2};;
+        *.tar) tar xvf ${1:2};;
+        *.arj) unarj ${1:2};;
     esac
 }
-alias -s {gz, tgz, zip, lzh, bz2, tbz, Z, tar, arj, xz}=extract
+alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
 
 #c/cpp
 #g++
 alias g++='g++ -std=c++17'
 function runcpp()
-    {
-        run_name=${1:2:r}
-        g++ -O2 $1 -o $run_name && shift && ./$run_name $@
-    }
+{
+    run_name=${1:2:r}
+    g++ -O3 ${1:2} -o $run_name && shift && ./$run_name $@
+}
 alias -s cpp=runcpp
 
 #gcc
 alias gcc='gcc -std=c11'
 function runc()
-    {
-        run_name=${1:2:r}
-        gcc -O2 $1 -o $run_name && shift && ./$run_name $@
-    }
+{
+    run_name=${1:2:r}
+    gcc -O2 ${1:2} -o $run_name && shift && ./$run_name $@
+}
 alias -s c=runc
 
 #nvcc
 alias nvcc='nvcc -std=c++14'
 function runcu()
-    {
-        run_name=${1:2:r}
-        nvcc -O2 $1 -o $run_name && shift && ./$run_name $@
-    }
+{
+    run_name=${1:2:r}
+    nvcc ${1:2} -o $run_name && shift && ./$run_name $@
+}
 alias -s cu=runcu
 
 #java
 function runjava()
-    {
-        run_name=${1:2:r}
-        javac -O2 $1 -o $run_name && shift && java $run_name $@
-    }
+{
+    run_name=${1:2:r}
+    javac -O ${1:2} && shift && java $run_name $@
+}
 alias -s java=runjava
+
+#lua
+function runlua()
+{
+    run_name=${1:2}
+    shift
+    luajit $run_name $@
+}
+
+#cobol
+function runcobol()
+{
+    run_name=${1:2:r}
+    cobc -O2 -x ${1:2} && shift && ./$run_name $@
+}
+alias -s cbl=runcobol
+
+#nim
+function runnim()
+{
+    nim c -r ${1:2}
+}
+alias -s nim=runnim
+
+function runjs()
+{
+    run_name=${1:2}
+    shift
+    node $run_name $@
+}
+alias -s js=runjs
+
+function runts()
+{
+    run_name=${1:2:r}
+    tsc $run_name.ts && shift && node $run_name.js $@
+}
+alias -s ts=runts
+
+function runcs()
+{
+    run_name=${1:2}
+    mcs $run_name.cs && shift && ./$run_name.exe $@
+}
+alias -s cs=runcs
+
+function runqml()
+{
+    qmlscene ${1:2}
+}
+alias -s qml=runqml
+
+function runrust()
+{
+    run_name=${1:2:r}
+    rustc $run_name.rs && shift && ./$run_name $@
+}
+alias -s rs=runrust
 
 alias ipython='ipython --no-banner'
 #OS別の設定

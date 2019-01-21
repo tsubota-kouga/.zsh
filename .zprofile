@@ -9,3 +9,5 @@ case $TERM in
 esac
 
 
+
+export PATH="$HOME/.cargo/bin:$PATH"
