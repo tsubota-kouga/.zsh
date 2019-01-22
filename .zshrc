@@ -1,4 +1,24 @@
-#zsh
+
+# zplug
+source ~/.zplug/init.zsh
+zplug 'zplug/zplug', hook-build:'zplug --self-manage'
+
+# async tasking
+zplug "mafredri/zsh-async"
+
+# syntax highlight
+zplug "zsh-users/zsh-syntax-highlighting"
+
+# # auto completions
+# zplug "zsh-users/zsh-autosuggestions"
+#
+# zplug "RobSis/zsh-completion-generator", if:"GENCOMPL_FPATH=$HOME/.zsh/complete"
+
+zplug "b4b4r07/enhancd", use:init.sh
+
+zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:fzf
+
+zplug "peco/peco", as:command, from:gh-r, use:"*amd64*"
 
 #色を使えるようにする
 autoload -Uz colors
@@ -30,8 +50,10 @@ zstyle ':zle:*' word-style unspecified
 
 #補完
 #補完機能有効
-autoload -Uz compinit
-compinit
+# 
+# these are invoked in zplug-init
+# autoload -Uz compinit
+# compinit
 
 #補完で大文字も小文字もマッチさせる
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
@@ -308,3 +330,19 @@ case ${OSTYPE} in
         ;;
 esac
 
+if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
+   zcompile ~/.zshrc
+fi
+
+if [ ~/.zcompdump -nt ~/.zcompdump.zwc ]; then
+   zcompile ~/.zcompdump
+fi
+
+# Install plugins which is not installed
+# if ! zplug check --verbose; then
+#   printf "Install? [y/N]: "
+#   if read -q; then
+#     echo; zplug install
+#   fi
+# fi
+zplug load

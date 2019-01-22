@@ -63,3 +63,6 @@ export NODE_PATH='/usr/local/lib/node_modules'
 
 # bazel
 export PATH="$HOME/bin:$PATH"
+
+# enhancd
+export ENHANCD_FILTER=fzf:peco
