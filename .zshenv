@@ -1,3 +1,4 @@
+
 # export LANG=en_US
 export LANG=ja_JP.UTF-8
 
@@ -5,13 +6,10 @@ export LANG=ja_JP.UTF-8
 export PATH="$HOME/anaconda3/bin/:$PATH"
 
 #AndroidStudio
-export PATH="/usr/local/android-Files/android-studio/bin/:$PATH"
-export ANDROID_HOME="/usr/local/AndroidStudio/:$ANDROID_HOME"
-alias androidstudio='studio.sh'
-
-#cuda
-export PATH="/usr/local/cuda/bin:$PATH"
-export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
+export ANDROID_HOME="$HOME/Android/Sdk/:$ANDROID_HOME"
+export ANDROID_HOME="/usr/lib/android-sdk/:$ANDROID_HOME"
+export PATH="$HOME/Android/Sdk/:$PATH"
+export PATH="/usr/lib/android-sdk/:$PATH"
 
 # config
 XDG_CONFIG_HOME="$HOME/.config:$XDG_CONFIG_HOME"
@@ -20,30 +18,17 @@ XDG_CONFIG_HOME="$HOME/.config:$XDG_CONFIG_HOME"
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
+export LD_LIBRARY_PATH="$PYENV_ROOT/versions/3.8-dev/lib:$LD_LIBRARY_PATH"
 
 # cython
 export CPATH="/usr/include/python3.6/:$CPATH"
 
 # java
 export JAVA_HOME="/usr/lib/jvm/java-1.11.0-openjdk-amd64"
-
-# qt
-export LIBRARY_PATH="$HOME/Qt/gcc_64/bin:$LIBRARY_PATH"
-export LIBRARY_PATH="$HOME/Qt/gcc_64/lib:$LIBRARY_PATH"
-export LIBRARY_PATH="$HOME/Qt/gcc_64/include:$LIBRARY_PATH"
-
-export CPATH="$HOME/Qt/gcc_64/bin:$CPATH"
-export CPATH="$HOME/Qt/gcc_64/lib:$CPATH"
-export CPATH="$HOME/Qt/gcc_64/include:$CPATH"
-
-export PATH="$HOME/Qt/gcc_64/bin:$PATH"
-export PATH="$HOME/Qt/gcc_64/lib:$PATH"
-export PATH="$HOME/Qt/gcc_64/include:$PATH"
-export PATH="$HOME/Qt/Tools/QtCreator/bin:$PATH"
-
-export CMAKE_PREFIX_PATH="$HOME/Qt/5.11.1/gcc_64/:$CMAKE_PREFIX_PATH"
-
-export PATH="$HOME/Qt/5.11.1/gcc_64/bin:$PATH"
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+# javafx
+export PATH_TO_FX="/usr/share/openjfx/lib"
 
 # to use Japanese in Qt application
 export QT_IM_MODULE=fcitx
@@ -53,7 +38,6 @@ export XMODIFIERS="@im=fcitx"
 # git clone library
 export PATH="/usr/local/include:$PATH"
 export CPATH="/usr/local/include:$CPATH"
-export LIBRARY_PATH="/usr/local/include:$LIBRARY_PATH"
 
 # nimble
 export PATH="$HOME/.nimble/bin/:$PATH"
@@ -66,3 +50,41 @@ export PATH="$HOME/bin:$PATH"
 
 # enhancd
 export ENHANCD_FILTER=fzf:peco
+
+# fonts
+export PATH="$HOMR/.fonts:$PATH"
+
+# rbenvj
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
+
+#stack
+export PATH="$HOME/.local/bin:$PATH"
+
+# dart
+export PATH="$HOME/snap/flutter/common/flutter/bin:$PATH"
+export PATH="$HOME/snap/flutter/common/flutter/.pub-cache/bin:$PATH"
+
+# golang
+export GOENV_ROOT="$HOME/.goenv"
+export GOENV_GOPATH_PREFIX="$HOME/.go"
+export PATH="$GOENV_ROOT/bin:$PATH"
+eval "$(goenv init -)"
+export PATH="$PATH:$GOROOT/bin"
+export PATH="$PATH:$GOPATH/bin"
+
+# yarn
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin/$PATH"
+
+# nvm
+# export NVM_DIR="$HOME/.nvm"
+# volta
+export VOLTA_HOME="$HOME/.volta"
+export PATH="$VOLTA_HOME/bin:$PATH"
+
+# cuda
+export PATH="/usr/local/cuda/bin:$PATH"
+
+# rust
+export PATH="$HOME/.cargo/bin:$PATH"
+

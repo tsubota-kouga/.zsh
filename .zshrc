@@ -1,69 +1,58 @@
 
+# zmodload zsh/zprof && zprof
+# export LANG=C
+
 # zplug
 source ~/.zplug/init.zsh
 zplug 'zplug/zplug', hook-build:'zplug --self-manage'
 
-# async tasking
 zplug "mafredri/zsh-async"
 
-# syntax highlight
 zplug "zsh-users/zsh-syntax-highlighting"
 
-# # auto completions
-# zplug "zsh-users/zsh-autosuggestions"
-#
-# zplug "RobSis/zsh-completion-generator", if:"GENCOMPL_FPATH=$HOME/.zsh/complete"
-
-zplug "b4b4r07/enhancd", use:init.sh
+zplug "b4b4r07/enhancd", use:"init.sh"
 
 zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:fzf
 
 zplug "peco/peco", as:command, from:gh-r, use:"*amd64*"
 
-#色を使えるようにする
+# export NVM_LAZY_LOAD=true
+# zplug "lukechilds/zsh-nvm"
+
 autoload -Uz colors
 colors
 
-# キーバインドをviにする
 bindkey -v
 
-#ヒストリーの設定
 HISTFILE=~/.zsh_history
 HISTSIZE=1000
 SAVEHIST=1000
 
 
-#プロンプト
-#1行表示
-#PROMPT="%~ %# "
-#2行表示
 PROMPT=$"%B%{$fg[green]%}[%n@%m]%{${fg[blue]}%} %~%b
 %# "
 
 
-#単語の区切りを指定する
+# define sep of words
 autoload -Uz select-word-style
 select-word-style default
 zstyle ':zle:*' word-chars " /=;@:{},|"
 zstyle ':zle:*' word-style unspecified
 
 
-#補完
-#補完機能有効
-# 
 # these are invoked in zplug-init
 # autoload -Uz compinit
 # compinit
 
-#補完で大文字も小文字もマッチさせる
+# use ignore case
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
                             /usr/sbin /usr/bin /sbin /bin
-#psコマンドのプロセス名補完
+# completion of process name by using ps's output
 zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
 
-#tabで補完を表示させた後、続けてtabを押すと候補からパスを選択できるようになる
+# push tab and complete
 zstyle ':completion:*:default' menu select=1
 
 #vcs_info
@@ -80,84 +69,52 @@ function _update_vcs_info_msg()
 }
 add-zsh-hook precmd _update_vcs_info_msg
 
-
-#オプション
-#日本語名ファイルを表示可能にする
-setopt print_eight_bit
-
-#beepを無効にする
+setopt print_eight_bit  # enable 8bits file name
 setopt no_beep
-
-#フローコントロールを無効にする
 setopt no_flow_control
-
-#C-dでzshを終了させない
-# setopt ignore_eof
-
-#'#'以降をコメントとする
-setopt interactive_comments
-
-#ディレクトリ名だけでcdできる
+setopt interactive_comments  # start comments with #
 setopt auto_cd
-
-#cdしたら自動でpushdする
 setopt auto_pushd
-
-#同時に起動したzshの間でヒストリーを共有する
 setopt share_history
-
-#同じコマンドをヒストリーに残さない
 setopt hist_ignore_all_dups
-
-#スペースから始まるコマンドはヒストリには残さない
 setopt hist_ignore_space
-
-#ヒストリーに保存するときに余分なスペースを削除する
 setopt hist_reduce_blanks
-
-#高機能なワイルドカードを使用する
-setopt extended_glob
-
-#コマンドミスを修正
-setopt correct
-
-#キーバインド
-#C-rで履歴検索するときに*でワイルドカードを使用できるようにする
-bindkey '^R' history-incremental-pattern-search-backward
+setopt extended_glob  # use extended wild cards
+setopt correct  # correct command typo
+bindkey '^R' history-incremental-pattern-search-backward  # C-r
 bindkey ';5C' forward-word
 bindkey ';5D' backward-word
 
-
-#エイリアス設定
 alias la='ls -a'
 alias ll='ls -l'
 alias l='ls'
-alias pip-upgrade="pip freeze --local | grep -v '^\-e' | cut -d = -f 1 | xargs pip install -U pip"
+alias pip-upgrade="pip freeze --local | grep -v '^\-e' | grep -v '@' | cut -d = -f 1 | xargs -p pip install -U pip"
 
+alias pc-suspend='systemctl suspend'
+alias gdb='gdb -silent'
 alias mkdir='mkdir -p'
-
 function mkdircd(){ mkdir -p $@ && cd $_ }
-
 function mvcd(){ mv $@ && cd $_ }
 
 function iphone(){ sudo idevicepair pair }
+alias reverse-tethering="$HOME/Downloads/gnirehtet-rust-linux64/gnirehtet autorun"
+alias filer=nemo
 
-#sudoの後にコマンドのエイリアス展開を有効にする
-alias sudo='sudo '
+alias sudo='sudo '  # enable alias expand after sudo
 
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 
-# alias apt=apt-fast
 alias update='apt update && apt upgrade'
-#グローバルエイリアス
+# global alias
 alias -g L='| less'
-alias -g G='| grep'
+alias -g G='| grep --color'
 alias -g M='| more'
 alias -g S='| sort'
+alias -g F='$(fzf)'
 
-#Cで標準出力をクリップボードにコピーする
+# clip board
 if which pbcopy>/dev/null 2>&1 ; then
     # Mac
     alias -g C='| pbcopy'
@@ -170,11 +127,11 @@ elif which putclip >dev/null 2>&1 ; then
 fi
 
 #python3
-alias -s py=ipython
+alias -s py=python
+alias ipython='ipython --no-banner'
 
 #cython c-compilation
-function runcy()
-{
+function runcy() {
     run_name=${1:2:r}
     cython ${1:2} --embed
     gcc -O2 $run_name.c -o $run_name $(python-config --cflags --ldflags) && shift && ./$run_name $@
@@ -182,30 +139,23 @@ function runcy()
 }
 alias -s pyx=runcy
 
-#shell
 alias -s sh=bash
 
-#html
 alias -s html=firefox
 
-# lua
-alias -s lua=luajit
+alias -s {png,jpg,bmp,PNG,JPG,BMP,ico}=feh
 
-#写真を見る
-alias -s {png,jpg,bmp,PNG,JPG,BMP}=eog
-
-#pdf
 alias -s pdf=evince
 
-#blender
 alias -s blend=blender
 
-#gimp
 alias -s xcf=gimp
 
-#圧縮ファイルを展開
-function extract()
-{
+alias -s wav=aplay
+
+alias -s pl=perl
+
+function extract() {
     case $1 in
         *.tar.gz|*.tgz) tar xzvf ${1:2};;
         *.tar.xz) tar Jxvf ${1:2};;
@@ -218,106 +168,109 @@ function extract()
         *.Z) uncompress ${1:2};;
         *.tar) tar xvf ${1:2};;
         *.arj) unarj ${1:2};;
+        *.zx) unzx ${1:2};;
     esac
 }
 alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
 
-#c/cpp
-#g++
 alias g++='g++ -std=c++17'
-function runcpp()
-{
+function runcpp() {
     run_name=${1:2:r}
     g++ -O3 ${1:2} -o $run_name && shift && ./$run_name $@
 }
 alias -s cpp=runcpp
 
-#gcc
 alias gcc='gcc -std=c11'
-function runc()
-{
+function runc() {
     run_name=${1:2:r}
     gcc -O2 ${1:2} -o $run_name && shift && ./$run_name $@
 }
 alias -s c=runc
 
-#nvcc
 alias nvcc='nvcc -std=c++14'
-function runcu()
-{
+function runcu() {
     run_name=${1:2:r}
     nvcc ${1:2} -o $run_name && shift && ./$run_name $@
 }
 alias -s cu=runcu
 
-#java
-function runjava()
-{
+function runjava() {
     run_name=${1:2:r}
     javac -O ${1:2} && shift && java $run_name $@
 }
 alias -s java=runjava
 
-#lua
-function runlua()
-{
+function runkotlin() {
+    run_name=${1:2:r}
+    kotlinc ${1:2} -include-runtime -d $run_name.jar && kotlin $run_name.jar
+}
+alias -s kt=runkotlin
+
+alias -s lua=luajit
+
+function runlua() {
     run_name=${1:2}
     shift
     luajit $run_name $@
 }
 
-#cobol
-function runcobol()
-{
+function runcobol() {
     run_name=${1:2:r}
     cobc -O2 -x ${1:2} && shift && ./$run_name $@
 }
 alias -s cbl=runcobol
 
-#nim
-function runnim()
-{
+function runnim() {
     nim c -r ${1:2}
 }
 alias -s nim=runnim
 
-function runjs()
-{
+function runjs() {
     run_name=${1:2}
     shift
     node $run_name $@
 }
 alias -s js=runjs
 
-function runts()
-{
+function runts() {
     run_name=${1:2:r}
     tsc $run_name.ts && shift && node $run_name.js $@
 }
 alias -s ts=runts
 
-function runcs()
-{
+function runcs() {
     run_name=${1:2}
-    mcs $run_name.cs && shift && ./$run_name.exe $@
+    mcs $run_name && shift && ./$run_name.exe $@
 }
 alias -s cs=runcs
 
-function runqml()
-{
+function runqml() {
     qmlscene ${1:2}
 }
 alias -s qml=runqml
 
-function runrust()
-{
+function runrust() {
     run_name=${1:2:r}
     rustc $run_name.rs && shift && ./$run_name $@
 }
 alias -s rs=runrust
 
-alias ipython='ipython --no-banner'
-#OS別の設定
+function runlatex() {
+    run_name=${1:2:r}
+    platex $run_name.latex
+    platex $run_name.latex  # for \tableofcontents
+    dvipdfmx $run_name.dvi
+    rm ${run_name}.aux ${run_name}.log ${run_name}.dvi ${run_name}.nav \
+        ${run_name}.out ${run_name}.toc ${run_name}.snm
+}
+alias -s latex=runlatex
+
+function runlibre() {
+    libreoffice ${1:2}
+}
+alias -s {odp,odp,docs,xls,xlsx,pptx}=runlibre
+
+
 case ${OSTYPE} in
     darwin*)
         # Mac
@@ -330,11 +283,26 @@ case ${OSTYPE} in
         ;;
 esac
 
+export EDITOR="/usr/bin/nvim"
+export VISUAL="/usr/bin/nvim"
+
 if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
    zcompile ~/.zshrc
 fi
 
 if [ ~/.zcompdump -nt ~/.zcompdump.zwc ]; then
+   zcompile ~/.zcompdump
+fi
+
+if [ ~/.zshenv -nt ~/.zshenv.zwc ]; then
+   zcompile ~/.zcompdump
+fi
+
+if [ ~/.zprofile -nt ~/.zprofile.zwc ]; then
+   zcompile ~/.zcompdump
+fi
+
+if [ ~/.zsh_history -nt ~/.zsh_history.zwc ]; then
    zcompile ~/.zcompdump
 fi
 
@@ -345,4 +313,10 @@ fi
 #     echo; zplug install
 #   fi
 # fi
+
 zplug load
+
+# if (which zprof > /dev/null 2>&1) ;then
+#   zprof
+# fi
+
